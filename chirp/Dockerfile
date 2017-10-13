@@ -1,7 +1,5 @@
 FROM node:boron
 
-ENV MONGODB_URI mongodb://localhost/test-chirp
-
 # Create app directory
 WORKDIR /usr/src/app
 
