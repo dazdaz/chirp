@@ -23,7 +23,6 @@ export default class Login extends Component {
   onSuccess(userJson){    
     const { params} = this.props.navigation.state;
     params.setUser(userJson);
-    // this.state.action(userJson);
     const backAction = NavigationActions.back();
     this.props.navigation.dispatch(backAction);
   }

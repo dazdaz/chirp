@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import UserInput from './UserInput';
 import Dimensions from 'Dimensions';
+import { LoginAsync, RegisterAsync } from 'utils/RestService'
 
 import usernameImg from 'res/username.png';
 import passwordImg from 'res/password.png';
@@ -15,8 +16,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-var REQUEST_URL = 'https://chirp-app-saqlain.herokuapp.com/auth/';
-
 export default class Form extends Component {
     constructor(props) {
         super(props);
@@ -29,69 +28,40 @@ export default class Form extends Component {
     }
 
     _onPress() {
-        // if (this.state.color === "#ff0000")
-        //     this.state.color = "#841584";
-        // else
-        //     this.state.color = "#ff0000";
-
         if (this.props.title === "Login") {
-            this._loginOrRegister(true);
+            this._login();
         }
         else if (this.props.title === "Register") {
-            this._loginOrRegister(false);
+            this._register();
         }
-
 
         this.forceUpdate();
     }
 
-    _loginOrRegister(login: boolean) {
-
-
-        var params = {
-            'username': this.state.username,
-            'password': this.state.password,
-            // 'grant_type': 'password'
-        };
-        var formBody = [];
-        for (var property in params) {
-            var encodedKey = (property);
-            var encodedValue = (params[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
+    async _login(){
+        var respJson = await LoginAsync(this.state.username, this.state.password);
+        if (respJson) {
+            if (respJson.state === 'success') {
+                alert('You have logged in successfully!');
+                this.props.onSuccess(respJson.user);
+            }
+            else {
+                alert(respJson.message);
+            }
         }
-        formBody = formBody.join("&");
-        var formData = new FormData();
+    }
 
-        console.log("formBody " + formBody);
-        console.log("url " + REQUEST_URL + (login ? "login" : "signup"));
-        
-        var func = fetch(REQUEST_URL + (login ? "login" : "signup"), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        })
-            .then((response) => response.json())
-            .then((respJson) => {
-                // this.props.action(responseJson);
-
-        console.log(respJson);
-                if(respJson.state === 'success'){
-                    if(!login)
-                        alert('You have registered successfully, please login!');
-                    this.props.onSuccess(respJson.user);
-                }
-                else{
-                    alert(respJson.message);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-
-        return func;
-
+    async _register(){
+        var respJson = await RegisterAsync(this.state.username, this.state.password);
+        if (respJson) {
+            if (respJson.state === 'success') {
+                alert('You have registered successfully!');
+                this.props.onSuccess(respJson.user);
+            }
+            else {
+                alert(respJson.message);
+            }
+        }
     }
 
     render() {

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, ListView, Text, View, RefreshControl } from 'react-native';
 import moment from 'moment' // for datetime format
+import { GetPostsAsync } from 'utils/RestService'
 
-var REQUEST_URL = 'https://chirp-app-saqlain.herokuapp.com/api/posts';
+
 
 export default class Posts extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -17,31 +19,23 @@ export default class Posts extends Component {
     return this._loadData();
   }
 
-  _loadData() {
-    var func = fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        this.setState({
-          isLoading: false,
-          dataSource: ds.cloneWithRows(responseJson),
-        }, function () {
-          // do something with new state
-        });
-      })
-      .catch((error) => {
-        console.error(error);
+  async _loadData() {
+    let respJson = await GetPostsAsync();
+    console.log('json ' + respJson);
+    if (respJson) {
+      let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+      this.setState({
+        isLoading: false,
+        dataSource: ds.cloneWithRows(respJson)
       });
-
-    return func;
-
+    }
   }
-  
+
   static toDateTimeString(dateStr: string) {
     return moment(new Date(dateStr)).format('lll');
   }
 
-  
+
 
   _onRefresh() {
     if (!this.state.isLoading) {
@@ -59,7 +53,7 @@ export default class Posts extends Component {
           <ActivityIndicator />
         </View>
       );
-    } 
+    }
 
     return (
       <View style={{ flex: 1, paddingTop: 0, paddingBottom: 20, alignItems: 'stretch' }}>

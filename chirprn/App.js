@@ -11,15 +11,15 @@ import Posts from './components/Posts';
 import Login from 'login/Login';
 import Register from 'login/Register';
 import Prompt from 'react-native-prompt';
+import Global from 'utils/Global'
+import { CreatePostAsync } from 'utils/RestService'
 
-
-var REQUEST_URL = 'https://chirp-app-saqlain.herokuapp.com/api/posts';
 class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            helloStr: 'Hello, please log in to Chirp!',
+            helloStr: 'Please log in to Chirp!',
             user: [],
             showAuth: true,
             chirpVisible: false,
@@ -39,6 +39,7 @@ class HomeScreen extends React.Component {
         title: 'Chirp',
     };
 
+    //#region Render
     render() {
         return (
             <View style={styles.container}>
@@ -59,32 +60,13 @@ class HomeScreen extends React.Component {
                     visible={this.state.chirpVisible}
                     onCancel={() => this.setState({ chirpVisible: false })}
                     onSubmit={(value) => {
-                        this.setState({ chirpVisible: false });
-                        this._createChirp(value);
+                        if (value) {
+                            this.setState({ chirpVisible: false });
+                            this._createPost(value);
+                        } else
+                            alert('Please enter something to chirp');
                     }} />
             )
-        }
-    }
-
-    _createChirp(value: string) {
-        console.log('this.state.user.username ' + this.state.user.username);
-        if (this.state.user.username === 'hieunhu') {
-            var body = 'text=' + value + '&created_by=' + this.state.user.username;
-            var func = fetch(REQUEST_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: body
-            })
-                .then((response) => response.json())
-                .then((respJson) => {
-                    if (respJson.created_by === this.state.user.username) {
-                        alert('You have chirped successfully ' + respJson.created_by);
-                        this.refs.posts._loadData();
-                    }
-
-                });
         }
     }
 
@@ -127,6 +109,19 @@ class HomeScreen extends React.Component {
             </View>)
         }
     }
+    //#endregion
+
+    async _createPost(value) {
+        if (this.state.user.username) {
+            var respJson = await CreatePostAsync(value, this.state.user.username)
+            if (respJson) {
+                if (respJson.created_by === this.state.user.username) {
+                    alert('You have chirped successfully ' + respJson.created_by);
+                    this.refs.posts._loadData();
+                }
+            }
+        }
+    }
 }
 
 var styles = StyleSheet.create({
@@ -135,7 +130,7 @@ var styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#ffffff'
     },
-    hello:{
+    hello: {
         margin: 20
     }
 });
