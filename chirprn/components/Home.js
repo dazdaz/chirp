@@ -3,11 +3,10 @@ import {
     StyleSheet,
     View,
     Button,
-    AppRegistry,
     Text,
 } from 'react-native';
 import Posts from './Posts';
-import Register from 'login/Register';
+import Register from 'auth/Register';
 import Prompt from 'react-native-prompt';
 import Global from 'utils/Global'
 import { CreatePostAsync } from 'utils/RestService'
@@ -22,7 +21,6 @@ export default class Home extends React.Component {
             showAuth: true,
             chirpVisible: false,
         }
-        //this.setUser = this.setUser.bind(this);
     }
 
     static navigationOptions = {
@@ -109,7 +107,7 @@ export default class Home extends React.Component {
             showAuth: false,
         });
     }
-    
+
     async _createPost(value) {
         if (this.state.user.username) {
             var respJson = await CreatePostAsync(value, this.state.user.username)

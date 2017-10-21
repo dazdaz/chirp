@@ -11,8 +11,8 @@
           "expose": "res"
         },
         {
-          "src": "./components/login",
-          "expose": "login"
+          "src": "./components/auth",
+          "expose": "auth"
         },
         {
           "src": "./components/utils",
