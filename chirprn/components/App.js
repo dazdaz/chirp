@@ -7,7 +7,7 @@ import {
     Text,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import Home from './components/Home';
+import Home from './Home';
 import Login from 'login/Login';
 import Register from 'login/Register';
 

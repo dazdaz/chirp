@@ -25,14 +25,6 @@ export default class Home extends React.Component {
         //this.setUser = this.setUser.bind(this);
     }
 
-    setUser(userJson) {
-        console.log(userJson);
-        this.setState({
-            helloStr: 'Hello ' + userJson.username,
-            user: userJson,
-            showAuth: false,
-        });
-    }
     static navigationOptions = {
         title: 'Chirp',
     };
@@ -109,6 +101,15 @@ export default class Home extends React.Component {
     }
     //#endregion
 
+    setUser(userJson) {
+        console.log(userJson);
+        this.setState({
+            helloStr: 'Hello ' + userJson.username,
+            user: userJson,
+            showAuth: false,
+        });
+    }
+    
     async _createPost(value) {
         if (this.state.user.username) {
             var respJson = await CreatePostAsync(value, this.state.user.username)
