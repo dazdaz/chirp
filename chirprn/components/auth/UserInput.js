@@ -8,24 +8,53 @@ import {
 } from 'react-native';
 
 export default class UserInput extends Component {
+	constructor(props) {
+        super(props);
+        this.state = {
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
+        };
+	}
+	
+	onLayout(e) {
+		this.setState({
+			width: Dimensions.get('window').width,
+			height: Dimensions.get('window').height,
+		});
+	}
+
 	render() {
-        return (
-			<View style={styles.inputWrapper}>
+		var inputStyle = StyleSheet.flatten([
+			styles.input,
+			{
+				backgroundColor: 'rgba(255, 255, 255, 0.4)',
+				width: this.state.width - 40,
+				height: 40,
+				marginHorizontal: 20,
+				paddingLeft: 45,
+				borderRadius: 20,
+				color: '#ffffff',
+			}
+		  ])
+		return (
+			<View style={styles.inputWrapper} onLayout={this.onLayout.bind(this)}>
 				<Image source={this.props.source}
 					style={styles.inlineImg} />
-				<TextInput style={styles.input}
+				<TextInput style={inputStyle}
 					placeholder={this.props.placeholder}
 					secureTextEntry={this.props.secureTextEntry}
 					autoCorrect={this.props.autoCorrect}
 					autoCapitalize={this.props.autoCapitalize}
-                    returnKeyType={this.props.returnKeyType}
-                    onChangeText={this.props.onChangeText}
-                    value={this.props.value}
+					returnKeyType={this.props.returnKeyType}
+					onChangeText={this.props.onChangeText}
+					value={this.props.value}
 					placeholderTextColor='white'
 					underlineColorAndroid='transparent' />
 			</View>
 		);
-    }
+	}
+
+	
 }
 
 UserInput.propTypes = {
@@ -37,23 +66,12 @@ UserInput.propTypes = {
 	returnKeyType: PropTypes.string,
 };
 
-
-const DEVICE_WIDTH = Dimensions.get('window').width;
-const DEVICE_HEIGHT = Dimensions.get('window').height;
-
 const styles = StyleSheet.create({
-	input: {
-		backgroundColor: 'rgba(255, 255, 255, 0.4)',
-		width: DEVICE_WIDTH - 40,
-		height: 40,
-		marginHorizontal: 20,
-		paddingLeft: 45,
-		borderRadius: 20,
-		color: '#ffffff',
-	},
 	inputWrapper: {
-        height: 40,
-        marginBottom: 20
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 40,
+		marginBottom: 20
 	},
 	inlineImg: {
 		position: 'absolute',

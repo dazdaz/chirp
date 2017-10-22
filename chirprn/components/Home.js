@@ -14,12 +14,11 @@ import { CreatePostAsync } from 'utils/RestService'
 export default class Home extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             helloStr: 'Please log in to Chirp!',
             user: [],
             showAuth: true,
-            chirpVisible: false,
+            showPrompt: false,
         }
     }
 
@@ -40,16 +39,16 @@ export default class Home extends React.Component {
     }
 
     _renderPrompt() {
-        if (this.state.chirpVisible) {
+        if (this.state.showPrompt) {
             return (
                 <Prompt
                     title="Chirp something"
                     placeholder="Meow meow"
-                    visible={this.state.chirpVisible}
-                    onCancel={() => this.setState({ chirpVisible: false })}
+                    visible={this.state.showPrompt}
+                    onCancel={() => this.setState({ showPrompt: false })}
                     onSubmit={(value) => {
                         if (value) {
-                            this.setState({ chirpVisible: false });
+                            this.setState({ showPrompt: false });
                             this._createPost(value);
                         } else
                             alert('Please enter something to chirp');
@@ -61,12 +60,7 @@ export default class Home extends React.Component {
     _renderAuth() {
         if (this.state.showAuth) {
             const { navigate } = this.props.navigation;
-            return (<View style={{
-                marginBottom: 50,
-                marginHorizontal: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-            }}>
+            return (<View style={styles.auth}>
                 <Button
                     onPress={() => navigate('Login', { setUser: this.setUser.bind(this) })}
                     title="Login"
@@ -78,19 +72,18 @@ export default class Home extends React.Component {
             </View>)
         }
         else { // show Chirp & Logout
-            return (<View style={{
-                marginBottom: 50,
-                marginHorizontal: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-            }}>
+            return (<View style={styles.auth}>
                 <Button
-                    onPress={() => this.setState({ chirpVisible: true })}
+                    onPress={() => this.setState({ showPrompt: true })}
                     title="Chirp"
                 />
                 <Button
                     onPress={() => {
-                        this.setState({ user: [], showAuth: true, helloStr: 'Hello, please log in to Chirp!' });
+                        this.setState({
+                            user: [],
+                            showAuth: true,
+                            helloStr: 'Hello, please log in to Chirp!'
+                        });
                     }}
                     title="Logout"
                 />
@@ -122,6 +115,12 @@ export default class Home extends React.Component {
 }
 
 var styles = StyleSheet.create({
+    auth: {
+        marginBottom: 20,
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
     container: {
         flex: 1,
         flexDirection: 'column',

@@ -11,7 +11,6 @@ export async function GetPostsAsync() {
         alert('Please check your network connection' + error)
         return null;
     };
-
 }
 
 export async function CreatePostAsync(value, username) {

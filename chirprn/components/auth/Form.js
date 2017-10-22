@@ -2,11 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import UserInput from './UserInput';
 import Dimensions from 'Dimensions';
 import { LoginAsync, RegisterAsync } from 'utils/RestService'
+// import { LoginAsync, RegisterAsync } from '../utils/RestService'
 
 import usernameImg from 'res/username.png';
 import passwordImg from 'res/password.png';
 
 import {
+    ScrollView,
     StyleSheet,
     Image,
     View,
@@ -19,11 +21,12 @@ import {
 export default class Form extends Component {
     constructor(props) {
         super(props);
-        this._onPress = this._onPress.bind(this);
         this.state = {
             username: "hieunhu",
             password: "123456",
             color: "#ff0000",
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
         };
     }
 
@@ -38,7 +41,7 @@ export default class Form extends Component {
         this.forceUpdate();
     }
 
-    async _login(){
+    async _login() {
         var respJson = await LoginAsync(this.state.username, this.state.password);
         if (respJson) {
             if (respJson.state === 'success') {
@@ -51,7 +54,7 @@ export default class Form extends Component {
         }
     }
 
-    async _register(){
+    async _register() {
         var respJson = await RegisterAsync(this.state.username, this.state.password);
         if (respJson) {
             if (respJson.state === 'success') {
@@ -64,45 +67,56 @@ export default class Form extends Component {
         }
     }
 
+    onLayout(e) {
+        // Ensure width & height values are updated during orientational change. 
+        // Portrait & Landscape
+        this.setState({
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
+        });
+    }
+
     render() {
         return (
+            <ScrollView contentContainerStyle={styles.picture} onLayout={this.onLayout.bind(this)}>
+                <KeyboardAvoidingView behavior='padding'
+                    style={styles.container}>
 
-            <KeyboardAvoidingView behavior='padding'
-                style={styles.container}>
-                {/* <TextInput
-                    style={{ width: DEVICE_WIDTH - 40, height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20 }}
-                    onChangeText={(username) => this.setState({ username })}
-                /> */}
+                    {/* <TextInput
+                        style={{ width: this.state.width - 40, height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20 }}
+                        onChangeText={(username) => this.setState({ username })}
+                    />
+                    <TextInput
+                        style={{ width: this.state.width - 40, height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20 }}
+                        secureTextEntry={true}
+                        onChangeText={(password) => this.setState({ password })}
+                    /> */}
 
-                <UserInput source={usernameImg}
-                    placeholder='Username'
-                    autoCapitalize={'none'}
-                    value={this.state.username}
-                    returnKeyType={'done'}
-                    onChangeText={(username) => this.setState({ username })}
-                    autoCorrect={false} />
-                <UserInput source={passwordImg}
-                    secureTextEntry={true}
-                    placeholder='Password'
-                    value={this.state.password}
-                    returnKeyType={'done'}
-                    autoCapitalize={'none'}
-                    onChangeText={(password) => this.setState({ password })}
-                    autoCorrect={false} />
-                {
-                /* <TextInput
-                    style={{ width: DEVICE_WIDTH - 40, height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20 }}
-                    secureTextEntry={true}
-                    onChangeText={(password) => this.setState({ password })}
-                /> */}
-                <Button
-                    onPress={this._onPress}
-                    title={this.props.title}
-                    color={this.state.color}
-                    accessibilityLabel="Learn more about this purple button"
-                />
+                    <UserInput source={usernameImg}
+                        placeholder='Username'
+                        autoCapitalize={'none'}
+                        value={this.state.username}
+                        returnKeyType={'done'}
+                        onChangeText={(username) => this.setState({ username })}
+                        autoCorrect={false} />
+                    <UserInput source={passwordImg}
+                        secureTextEntry={true}
+                        placeholder='Password'
+                        value={this.state.password}
+                        returnKeyType={'done'}
+                        autoCapitalize={'none'}
+                        onChangeText={(password) => this.setState({ password })}
+                        autoCorrect={false} />
 
-            </KeyboardAvoidingView>);
+                    <Button
+                        onPress={this._onPress.bind(this)}
+                        // Everytime a component give its function for a child to call, we need to call bind.
+                        title={this.props.title}
+                        accessibilityLabel="Learn more about this purple button"
+                    />
+
+                </KeyboardAvoidingView>
+            </ScrollView>);
     }
 }
 
@@ -110,26 +124,19 @@ Form.propTypes = {
     title: PropTypes.string.isRequired,
 };
 
-const DEVICE_WIDTH = Dimensions.get('window').width;
-const DEVICE_HEIGHT = Dimensions.get('window').height;
-
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 150,
+        marginBottom: 100,
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'center'
     },
-    btnEye: {
-        position: 'absolute',
-        top: 55,
-        right: 28,
-    },
-    iconEye: {
-        width: 25,
-        height: 25,
-        tintColor: 'rgba(0,0,0,0.2)',
+    picture: {
+        flex: 1,
+        width: null,
+        height: null,
+        // resizeMode: 'cover',
     },
 });
