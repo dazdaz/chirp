@@ -6,9 +6,9 @@ import {
     Text,
 } from 'react-native';
 import Posts from './Posts';
-import Register from 'auth/Register';
+import Register from './auth/Register';
 import Prompt from 'react-native-prompt';
-import Global from 'utils/Global'
+import Global from './utils/Global'
 import { CreatePostAsync } from 'utils/RestService'
 
 export default class Home extends React.Component {

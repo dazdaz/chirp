@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, ListView, Text, View, RefreshControl } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View, RefreshControl } from 'react-native';
 import moment from 'moment' // for datetime format
 import { GetPostsAsync } from 'utils/RestService'
-
-
 
 export default class Posts extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      dataSource: [],
       isLoading: true,
       refreshing: false,
     }
@@ -21,12 +20,11 @@ export default class Posts extends Component {
 
   async _loadData() {
     let respJson = await GetPostsAsync();
-    console.log('json ' + respJson);
+    console.log(respJson);
     if (respJson) {
-      let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
       this.setState({
         isLoading: false,
-        dataSource: ds.cloneWithRows(respJson)
+        dataSource: respJson
       });
     }
   }
@@ -46,6 +44,11 @@ export default class Posts extends Component {
     }
   }
 
+  GetFlatListItem(fruit_name) {
+
+    alert(JSON.stringify(fruit_name));
+
+  }
   render() {
     if (this.state.isLoading) {
       return (
@@ -57,26 +60,32 @@ export default class Posts extends Component {
 
     return (
       <View style={{ flex: 1, paddingTop: 0, paddingBottom: 20, alignItems: 'stretch' }}>
-        <ListView
-          dataSource={this.state.dataSource}
+        <FlatList
+          data={this.state.dataSource}
+          keyExtractor={rowData => rowData._id}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-          renderRow={(rowData) =>
-            <View style={{ flex: 2, padding: 10, marginTop: 5, marginBottom: 5, marginLeft: 10, marginRight: 10, backgroundColor: '#f2f9ff', alignItems: 'stretch' }}>
-              <Text>{rowData.text}</Text>
+          renderItem={({ item }) => {
+            // renderItem={(row) => {
+            // var rowData = (row.item);
+            console.log(item);
+            return (<View
+              style={{ flex: 2, padding: 10, marginTop: 5, marginBottom: 5, marginLeft: 10, marginRight: 10, backgroundColor: '#f2f9ff', alignItems: 'stretch' }}>
+              <Text>{item.text}</Text>
               <View style={{
                 flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-                <Text>Posted by @{rowData.created_by}</Text>
-                <Text>{Posts.toDateTimeString(rowData.created_at)}</Text>
+                <Text>Posted by @{item.created_by}</Text>
+                <Text>{Posts.toDateTimeString(item.created_at)}</Text>
               </View>
-            </View>
+            </View>)
+          }
           }
         />
       </View>
