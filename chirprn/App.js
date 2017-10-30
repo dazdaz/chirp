@@ -3,7 +3,7 @@ import {
     AppRegistry,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import Home from './Home';
+import Home from './components/Home';
 import Login from 'auth/Login';
 import Register from 'auth/Register';
 
